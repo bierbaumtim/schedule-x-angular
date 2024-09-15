@@ -2,6 +2,7 @@ import {
   AfterViewInit,
   Component,
   ContentChild,
+  ElementRef,
   Input,
   TemplateRef
 } from '@angular/core';
@@ -54,6 +55,8 @@ export class CalendarComponent implements AfterViewInit {
 
   public calendarElementId = randomStringId();
 
+  constructor(private elementRef: ElementRef) { }
+
   getTemplate(componentName: string): TemplateRef<any> {
     if (componentName === 'timeGridEvent') return this.timeGridEvent
 
@@ -81,7 +84,8 @@ export class CalendarComponent implements AfterViewInit {
   ngAfterViewInit() {
     if (typeof window !== 'object') return
 
-    const calendarElement = document.getElementById(this.calendarElementId);
+    const rootNode = this.elementRef.nativeElement.getRootNode();
+    const calendarElement = (rootNode instanceof ShadowRoot ? rootNode : document).getElementById(this.calendarElementId);
     if (!(calendarElement instanceof HTMLElement)) {
       throw new Error('No calendar element found')
     }
